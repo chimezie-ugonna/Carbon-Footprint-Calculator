@@ -1,5 +1,8 @@
 import tkinter as tk
-from tkinter import ttk
+from calculations import calculate_energy_footprint, calculate_waste_footprint, calculate_business_travel_footprint
+from ai import generate_report
+from tkinter import messagebox
+from pdf_generator import generate_pdf
 
 STYLES = {
     "title": {"font": ("Arial", 20, "bold"), "fg": "#2e8b57", "bg": "#f0f0f0"},
@@ -91,14 +94,39 @@ class DataEntryScreen:
         button_frame = tk.Frame(content_frame, bg="#f0f0f0")
         button_frame.pack(pady=STYLES["pady"])
 
-        calculate_button = tk.Button(button_frame, text="Calculate", **STYLES["button"])
+        calculate_button = tk.Button(button_frame, text="Calculate", command=self.calculate_footprints, **STYLES["button"])
         calculate_button.pack(side="left", padx=STYLES["padx"])
 
-        generate_button = tk.Button(button_frame, text="Generate PDF", **STYLES["button"])
+        generate_button = tk.Button(button_frame, text="Generate PDF", command=lambda: generate_pdf(self.response_text.get(1.0, tk.END), self.root), **STYLES["button"])
         generate_button.pack(side="left", padx=STYLES["padx"])
+
+        self.response_text = tk.Text(content_frame, wrap="word", font=("Arial", 12))
+        self.response_text.pack(fill="both", expand=True, padx=STYLES["padx"], pady=STYLES["pady"])
 
         content_frame.update_idletasks()
         canvas.config(scrollregion=canvas.bbox("all"))
+
+    def calculate_footprints(self):
+        energy_bill = float(self.energy_bill.get())
+        gas_bill = float(self.gas_bill.get())
+        fuel_bill = float(self.fuel_bill.get())
+        
+        waste_gen = float(self.waste_gen.get())
+        recycle_percentage = float(self.recycle_percentage.get())
+        
+        km_travel = float(self.km_travel.get())
+        fuel_efficiency = float(self.fuel_efficiency.get())
+
+        energy_footprint = calculate_energy_footprint(energy_bill, gas_bill, fuel_bill)
+        waste_footprint = calculate_waste_footprint(waste_gen, recycle_percentage)
+        business_travel_footprint = calculate_business_travel_footprint(km_travel, fuel_efficiency)
+
+        report = generate_report(energy_footprint, waste_footprint, business_travel_footprint)
+
+        self.response_text.config(state=tk.NORMAL)
+        self.response_text.delete(1.0, tk.END)
+        self.response_text.insert(tk.END, report)
+        self.response_text.config(state=tk.DISABLED)
 
     def validate_numeric_input(self, input_value):
         if input_value == "":
