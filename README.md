@@ -72,7 +72,7 @@ generate_pdf(report, energy_footprint, waste_footprint, business_travel_footprin
 ```
 
 ## Example
-Here’s an example of how to use the application:
+Here’s an example of how the code works:
 
 ```python
 from calculations import calculate_energy_footprint, calculate_waste_footprint, calculate_business_travel_footprint
