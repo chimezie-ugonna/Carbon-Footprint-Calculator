@@ -5,4 +5,4 @@ def calculate_waste_footprint(waste_generated, recycling_percentage):
     return (waste_generated * 12 * (0.57 - (recycling_percentage / 100)))
 
 def calculate_business_travel_footprint(km_travel, fuel_efficiency):
-    return (km_travel * (1 / (fuel_efficiency / 100))) * 2.31
+    return km_travel * (1 / fuel_efficiency) * 2.31
